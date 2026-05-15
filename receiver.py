@@ -20,19 +20,26 @@ print(f"Connected to {addr}")
 
 #Constant loop 
 while True:
-    #Waiting for the next packet, 2048 is the max bytes
-    data = conn.recv(2048)
+    #Creating a buffer to prevent incomplete packets from being processed
+    buffer = ""
+    while "####" not in buffer:
+        data = conn.recv(2048)
+        if not data:
+            break
+        buffer += data.decode()
     if not data:
         break
-    #Decodes bytes into string
-    msg = data.decode()
-    #Removes the unecessary parts of the string
-    seq_str = msg.split(";")[0]
-    #Converts string to int
-    seq = int(seq_str)
-    #Checks if the packet arrived in the correct order
-    if seq != expected:
-        print(f"ORDER ERROR: expected {expected}, got {seq}")
-    else:
-        print(f"OK : {seq}")
-    expected = seq +1
+
+    while "####" in buffer:
+        packet, buffer = buffer.split("####", 1)
+        seq_str = packet.split(";")[0]
+        try:
+            seq = int(seq_str)
+        except ValueError:
+            print(f"INCOMPLETE PACKET: {seq_str}")
+            continue
+        if seq != expected:
+            print(f"WRONG ORDER: expected {expected}, got {seq}")
+        else:
+            print(f"OK: {seq}")
+        expected = seq +1

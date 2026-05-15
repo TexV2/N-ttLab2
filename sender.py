@@ -12,9 +12,11 @@ NUMBER_OF_PACKETS = 600
 SEQUENCE_START = 10001
 
 #Creates a UDP socket using IPv4
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #Sets the delay
 delay = 1.0 / RATE
+#Connects to the Host (required for TCP)
+sock.connect((HOST, PORT))
 
 #Sends on packet for each i in range number of packets
 for i in range(NUMBER_OF_PACKETS):
@@ -24,8 +26,8 @@ for i in range(NUMBER_OF_PACKETS):
     payload = ("A" * 1465)[:1465]
     #Combines the order verification number with the "junk" data
     msg = (seq + payload + "####").encode()
-    #Sends the message to HOST's (laptop) PORT 5005
-    sock.sendto(msg, (HOST, PORT))
+    #Sends the message to the already connected HOST
+    sock.send(msg)
     #Pauses the script for one second
     time.sleep(delay)
 
