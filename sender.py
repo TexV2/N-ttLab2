@@ -5,9 +5,9 @@ HOST = "192.168.0.33"
 #Sets the PORT to 5005
 PORT = 5005
 #Sets the rate at which packets will be sent
-RATE = 46
+RATE = 45
 #Sets how many packets will be sent in total
-NUMBER_OF_PACKETS = 600
+NUMBER_OF_PACKETS = 4500
 #Selects what the starting message on the packet will be
 SEQUENCE_START = 10001
 

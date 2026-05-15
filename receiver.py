@@ -18,10 +18,11 @@ print("Listening...")
 conn, addr =sock.accept()
 print(f"Connected to {addr}")
 
-#Constant loop 
+
 while True:
     #Creating a buffer to prevent incomplete packets from being processed
     buffer = ""
+    #Keeps collecting data until we have a complete packet
     while "####" not in buffer:
         data = conn.recv(2048)
         if not data:
@@ -29,15 +30,18 @@ while True:
         buffer += data.decode()
     if not data:
         break
-
+    #Runs through each complete message in buffer
     while "####" in buffer:
+        #Splits the buffer on the first #### (first complete message)
         packet, buffer = buffer.split("####", 1)
+        #Splits that message on ;, removing the uneccesary filler data
         seq_str = packet.split(";")[0]
         try:
             seq = int(seq_str)
         except ValueError:
             print(f"INCOMPLETE PACKET: {seq_str}")
             continue
+        #check if the packets arrived in the right order then advance the expected sequence order
         if seq != expected:
             print(f"WRONG ORDER: expected {expected}, got {seq}")
         else:
